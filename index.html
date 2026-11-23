@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f294a" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="icon.svg" />
+  <title>CKEM Int'l — Digital Hymnal</title>
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Google Fonts: Playfair Display & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg sticky-top ckem-navbar">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#" id="brandHomeBtn">
+        <div class="ckem-logo-badge" aria-hidden="true">
+          <img src="icon.svg" alt="CKEM Int'l Logo" width="38" height="38" />
+        </div>
+        <div class="d-flex flex-column lh-1">
+          <span class="brand-title">CKEM Int'l</span>
+          <span class="brand-subtitle">Sacred Hymnal</span>
+        </div>
+      </a>
+
+      <div class="d-flex align-items-center gap-2">
+        <!-- Wake Lock Toggle -->
+        <button class="btn btn-sm btn-ckem-outline" id="wakeLockBtn" title="Keep Screen Awake During Worship">
+          <i class="bi bi-display"></i>
+          <span class="d-none d-md-inline ms-1">Screen On</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button class="btn btn-sm btn-ckem-outline" id="themeToggleBtn" title="Toggle Sanctuary Dark/Light Mode">
+          <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+        </button>
+
+        <!-- Add / Manage Hymns Modal Trigger -->
+        <button class="btn btn-sm btn-ckem-gold" data-bs-toggle="modal" data-bs-target="#manageHymnsModal">
+          <i class="bi bi-plus-lg"></i>
+          <span class="ms-1">Add Hymn</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container py-4">
+
+    <!-- 3D Interactive Hero Showcase -->
+    <section class="hero-3d-section mb-4" id="heroSection">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+          <span class="badge ckem-pill mb-2">
+            <i class="bi bi-music-note-beamed me-1"></i> Multi-Hymnal Congregation Edition
+          </span>
+          <h1 class="hero-heading mb-2">Worship in Spirit &amp; Truth</h1>
+          <p class="hero-subtext mb-3">
+            Fast, offline-ready digital hymnal for <strong>CKEM Int'l</strong>. Search by hymn number, title, or lyrics across all church hymnbooks.
+          </p>
+
+          <!-- Instant Search Bar -->
+          <div class="search-wrapper position-relative">
+            <i class="bi bi-search search-icon"></i>
+            <input
+              type="text"
+              id="searchInput"
+              class="form-control form-control-lg ckem-search-input"
+              placeholder="Search hymn number, title, or first line..."
+              autocomplete="off"
+            />
+            <button class="btn btn-link clear-search-btn d-none" id="clearSearchBtn" aria-label="Clear search">
+              <i class="bi bi-x-circle-fill"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3D Tilt Hymnbook Cover Card -->
+        <div class="col-lg-5 d-flex justify-content-center">
+          <div class="book-3d-scene" id="book3dScene">
+            <div class="book-3d-card" id="book3dCard">
+              <div class="book-spine"></div>
+              <div class="book-cover">
+                <div class="book-border-inner">
+                  <div class="book-crest mb-2">
+                    <img src="icon.svg" alt="CKEM Int'l Crest" width="58" height="58" />
+                  </div>
+                  <div class="book-church-name">CKEM INT'L</div>
+                  <div class="book-divider"></div>
+                  <div class="book-title">SACRED HYMNS<br/>&amp; SPIRITUAL SONGS</div>
+                  <div class="book-stats mt-3">
+                    <span id="totalHymnsBadge">0 Hymns Loaded</span>
+                  </div>
+                </div>
+              </div>
+              <div class="book-pages-edge"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hymnal Category Filter Tabs & Favorites -->
+    <section class="mb-4">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+        <div class="category-pills d-flex flex-wrap gap-2" id="categoryTabs">
+          <button class="btn btn-sm ckem-tab active" data-category="ALL">All Hymns</button>
+          <button class="btn btn-sm ckem-tab" data-category="FAVORITES">
+            <i class="bi bi-heart-fill text-danger me-1"></i>Favorites
+          </button>
+          <button class="btn btn-sm ckem-tab" data-category="CAC">CAC</button>
+          <button class="btn btn-sm ckem-tab" data-category="TAC">TAC</button>
+          <button class="btn btn-sm ckem-tab" data-category="RCCG">Redemption (RCCG)</button>
+          <button class="btn btn-sm ckem-tab" data-category="SSS">SS&amp;S</button>
+          <button class="btn btn-sm ckem-tab" data-category="CHORUS">Choruses / Indigenous</button>
+        </div>
+
+        <div class="text-muted small" id="resultsCountLabel">Showing 0 hymns</div>
+      </div>
+
+      <!-- Hymn List Grid -->
+      <div id="hymnListView">
+        <div class="row g-3" id="hymnGrid"></div>
+
+        <!-- Empty State -->
+        <div class="empty-state-card text-center py-5 px-3" id="emptyState">
+          <div class="empty-icon-wrap mb-3">
+            <i class="bi bi-journal-plus"></i>
+          </div>
+          <h4 class="fw-bold mb-2">Your CKEM Int'l Hymnal is Ready</h4>
+          <p class="text-muted mx-auto mb-4" style="max-width: 480px;">
+            No hymns have been added yet. Add your first hymn manually or import a JSON batch to start building your church's offline collection.
+          </p>
+          <button class="btn btn-ckem-gold px-4 py-2" data-bs-toggle="modal" data-bs-target="#manageHymnsModal">
+            <i class="bi bi-plus-circle me-2"></i>Add Your First Hymn
+          </button>
+        </div>
+      </div>
+
+      <!-- 3D Flip Hymn Reader View -->
+      <div id="hymnReaderView" class="d-none">
+        <div class="reader-stage">
+          <div class="reader-page-card" id="readerPageCard">
+            <!-- Reader Top Controls -->
+            <div class="reader-toolbar d-flex flex-wrap align-items-center justify-content-between gap-2 pb-3 mb-4 border-bottom">
+              <button class="btn btn-sm btn-ckem-outline" id="backToListBtn">
+                <i class="bi bi-arrow-left me-1"></i> Back to Index
+              </button>
+
+              <div class="d-flex align-items-center gap-2">
+                <!-- Font Size Controls -->
+                <div class="btn-group btn-group-sm" role="group" aria-label="Font Size">
+                  <button type="button" class="btn btn-ckem-outline" id="fontDecreaseBtn" title="Decrease Text Size">A-</button>
+                  <button type="button" class="btn btn-ckem-outline" id="fontResetBtn" title="Reset Text Size">100%</button>
+                  <button type="button" class="btn btn-ckem-outline" id="fontIncreaseBtn" title="Increase Text Size">A+</button>
+                </div>
+
+                <!-- Favorite Toggle -->
+                <button class="btn btn-sm btn-ckem-outline" id="readerFavBtn" title="Bookmark Hymn">
+                  <i class="bi bi-heart"></i>
+                </button>
+
+                <!-- Edit / Delete Hymn -->
+                <button class="btn btn-sm btn-ckem-outline" id="readerEditBtn" title="Edit Hymn">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" id="readerDeleteBtn" title="Delete Hymn">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Hymn Metadata Header -->
+            <div class="text-center mb-4">
+              <span class="badge ckem-book-badge mb-2" id="readerBookBadge">HYMNAL</span>
+              <h2 class="reader-hymn-number mb-1" id="readerHymnNumber">Hymn 1</h2>
+              <h3 class="reader-hymn-title mb-2" id="readerHymnTitle">Hymn Title</h3>
+              <p class="text-muted small mb-0" id="readerHymnMeta"></p>
+            </div>
+
+            <!-- Lyrics Container -->
+            <div class="reader-lyrics-body mx-auto" id="readerLyricsBody"></div>
+
+            <!-- Previous / Next 3D Page Turn Footer -->
+            <div class="d-flex justify-content-between align-items-center pt-4 mt-4 border-top">
+              <button class="btn btn-ckem-outline" id="prevHymnBtn">
+                <i class="bi bi-chevron-left me-1"></i> Previous Hymn
+              </button>
+              <button class="btn btn-ckem-outline" id="nextHymnBtn">
+                Next Hymn <i class="bi bi-chevron-right ms-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="ckem-footer py-3 mt-auto">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2 small">
+      <span>&copy; <span id="currentYear"></span> <strong>CKEM Int'l</strong> — Digital Worship Hymnal</span>
+      <span class="text-muted">Offline Ready &bull; Saved Locally on Device</span>
+    </div>
+  </footer>
+
+  <!-- Modal: Add / Edit / Bulk Import Hymns -->
+  <div class="modal fade" id="manageHymnsModal" tabindex="-1" aria-labelledby="manageHymnsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content ckem-modal">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="manageHymnsModalLabel">
+            <i class="bi bi-journal-text me-2 text-warning"></i>Manage CKEM Int'l Hymns
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Modal Tabs -->
+          <ul class="nav nav-pills mb-3" id="modalManageTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="single-tab" data-bs-toggle="pill" data-bs-target="#singlePane" type="button" role="tab">
+                Single Hymn Entry
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="bulk-tab" data-bs-toggle="pill" data-bs-target="#bulkPane" type="button" role="tab">
+                Bulk JSON Import / Export
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content">
+            <!-- Tab 1: Single Hymn Form -->
+            <div class="tab-pane fade show active" id="singlePane" role="tabpanel">
+              <form id="hymnForm">
+                <input type="hidden" id="editHymnId" />
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="hymnNumber" class="form-label fw-semibold">Hymn Number *</label>
+                    <input type="text" class="form-control" id="hymnNumber" placeholder="e.g. 1 or 104B" required />
+                  </div>
+                  <div class="col-md-8">
+                    <label for="hymnBook" class="form-label fw-semibold">Hymnal / Category *</label>
+                    <select class="form-select" id="hymnBook" required>
+                      <option value="CAC">CAC Gospel Hymn Book</option>
+                      <option value="TAC">TAC Hymnal</option>
+                      <option value="RCCG">Redemption Hymnal (RCCG)</option>
+                      <option value="SSS">Sacred Songs &amp; Solos (SS&amp;S)</option>
+                      <option value="CHORUS">Choruses / Indigenous</option>
+                    </select>
+                  </div>
+                  <div class="col-md-8">
+                    <label for="hymnTitle" class="form-label fw-semibold">Hymn Title *</label>
+                    <input type="text" class="form-control" id="hymnTitle" placeholder="e.g. Amazing Grace" required />
+                  </div>
+                  <div class="col-md-4">
+                    <label for="hymnMeta" class="form-label fw-semibold">Key / Meter / Author</label>
+                    <input type="text" class="form-control" id="hymnMeta" placeholder="e.g. Key G • C.M." />
+                  </div>
+                  <div class="col-12">
+                    <label for="hymnChorus" class="form-label fw-semibold">Chorus / Refrain (Optional)</label>
+                    <textarea class="form-control" id="hymnChorus" rows="3" placeholder="Enter chorus lines here if the hymn has a refrain..."></textarea>
+                  </div>
+                  <div class="col-12">
+                    <label for="hymnStanzas" class="form-label fw-semibold">Stanzas / Verses *</label>
+                    <textarea
+                      class="form-control"
+                      id="hymnStanzas"
+                      rows="7"
+                      placeholder="Separate each stanza with a blank line (press Enter twice between verses).&#10;&#10;Verse 1 line 1&#10;Verse 1 line 2&#10;&#10;Verse 2 line 1&#10;Verse 2 line 2"
+                      required
+                    ></textarea>
+                    <div class="form-text">Tip: Leave one blank line between stanzas so they are automatically numbered 1, 2, 3...</div>
+                  </div>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                  <button type="button" class="btn btn-secondary" id="resetFormBtn">Clear Form</button>
+                  <button type="submit" class="btn btn-ckem-gold px-4">
+                    <i class="bi bi-check2-circle me-1"></i> Save Hymn
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Tab 2: Bulk JSON Import / Backup -->
+            <div class="tab-pane fade" id="bulkPane" role="tabpanel">
+              <p class="small text-muted">
+                Paste a JSON array of hymns below to import multiple hymns at once, or export your current database as <code>hymns.json</code> to update the live GitHub site for all members.
+              </p>
+              <div class="mb-3">
+                <label for="bulkJsonInput" class="form-label fw-semibold">JSON Data</label>
+                <textarea
+                  class="form-control font-monospace small"
+                  id="bulkJsonInput"
+                  rows="8"
+                  placeholder='[
+  {
+    "number": "1",
+    "book": "CAC",
+    "title": "Sample Hymn Title",
+    "meta": "Key C • 8.7.8.7",
+    "chorus": "Optional chorus text...",
+    "stanzas": [
+      "First stanza line 1
+First stanza line 2",
+      "Second stanza line 1
+Second stanza line 2"
+    ]
+  }
+]'
+                ></textarea>
+              </div>
+              <div class="d-flex flex-wrap justify-content-between gap-2">
+                <button type="button" class="btn btn-sm btn-ckem-outline" id="exportJsonBtn">
+                  <i class="bi bi-download me-1"></i> Export Backup (.json)
+                </button>
+                <button type="button" class="btn btn-sm btn-ckem-gold" id="importJsonBtn">
+                  <i class="bi bi-upload me-1"></i> Import JSON Hymns
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- App Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

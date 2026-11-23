@@ -1,0 +1,15 @@
+{
+  "name": "CKEM Int'l Sacred Hymnal",
+  "short_name": "CKEM Hymnal",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#091b33",
+  "theme_color": "#0f294a",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
